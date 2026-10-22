@@ -2,6 +2,7 @@
 #include "node.hpp"
 #include <vector>
 #include  "network.hpp"
+#include "simulation.hpp"
 
 
 
@@ -23,19 +24,14 @@ int main(){
     net.add_edge(3,4);
 
 
-    for(std::size_t i = 0; i < nodes.size(); ++i){
-        nodes[i].id = static_cast<int>(i);
-        std::cout << nodes[i].id << " | Informed: " << nodes[i].informed << "\n";
-        std::cout << "{";
-        const std::vector<std::size_t>& nbrs = net.neighbors(i);
-        for(std::size_t j=0; j<nbrs.size(); ++j){
-            if(j>0) std::cout << ", ";
-            std::cout << nbrs[j];
-        }
-
-        std::cout << "}\n";
+    Simulation sim(net, Config {});
+    sim.run();
+    for(const Node& n : sim.nodes()){
+        std::cout << "node" << n.id << " heard at " << n.first_heard_at << "\n";
     }
 
+
+    
 
 
 
