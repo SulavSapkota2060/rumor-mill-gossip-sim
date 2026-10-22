@@ -1,0 +1,7 @@
+build/
+*.o
+*.dSYM/
+.vscode/
+.DS_Store
+.main.dSYM/
+
