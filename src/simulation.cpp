@@ -2,7 +2,7 @@
 #include "event.hpp"
 #include "network.hpp"
 
-Simulation::Simulation(const Network& net, Config config): net_(net), config_(config), nodes_(net.size()) {
+Simulation::Simulation(const Network& net, Config config): net_(net), config_(config), rng(config.seed), nodes_(net.size()) {
     for(std::size_t i=0; i<nodes_.size(); ++i){
         nodes_[i].id = static_cast<int>(i);
 
@@ -22,8 +22,11 @@ const std::vector<Node> & Simulation::nodes() const {return nodes_ ;}
 
 
 void Simulation::on_send(const Event& e){
+    std::bernoulli_distribution is_lost(config_.loss);
+    std::exponential_distribution<double> delay(1.0/ config_.latency);
     for(std::size_t friend_id: net_.neighbors(e.node)){
-        schedule(e.time + config_.latency, Event::Type::Deliver, friend_id);
+        if(is_lost(rng)) continue;
+        schedule(e.time + delay(rng), Event::Type::Deliver, friend_id);
 
     }
     schedule(e.time+config_.send_interval, Event::Type::Send, e.node);
