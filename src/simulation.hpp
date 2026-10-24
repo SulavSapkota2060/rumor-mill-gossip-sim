@@ -15,6 +15,7 @@ struct Config{
     std::size_t origin {0};
     double loss{0.0};
     std::uint32_t seed {42};
+    std::size_t fanout {3};
 
 };
 

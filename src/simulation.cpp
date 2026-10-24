@@ -24,10 +24,13 @@ const std::vector<Node> & Simulation::nodes() const {return nodes_ ;}
 void Simulation::on_send(const Event& e){
     std::bernoulli_distribution is_lost(config_.loss);
     std::exponential_distribution<double> delay(1.0/ config_.latency);
-    for(std::size_t friend_id: net_.neighbors(e.node)){
-        if(is_lost(rng)) continue;
-        schedule(e.time + delay(rng), Event::Type::Deliver, friend_id);
+    std::vector<std::size_t> targets = net_.neighbors(e.node);
+    std::shuffle(targets.begin(), targets.end(), rng);
+    std::size_t count = std::min(config_.fanout, targets.size());
 
+    for(std::size_t i=0; i < count; ++i){
+        if(is_lost(rng)) continue;
+        schedule(e.time + delay(rng), Event::Type::Deliver, targets[i]);
     }
     schedule(e.time+config_.send_interval, Event::Type::Send, e.node);
 

@@ -44,7 +44,11 @@ int main(){
     // 4. Heavy loss: should still reach everyone, just later
     run_and_print(net, Config{.time_limit=30.0, .loss=0.5, .seed=42});
 
-    
+    // 5. Fanout 1: each student tells only one random friend per round
+
+    run_and_print(net, Config{.time_limit=30.0, .loss=0.0, .seed=42, .fanout=1});
+
+
 
 
 
