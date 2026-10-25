@@ -20,17 +20,26 @@ struct Config{
 };
 
 
+struct Metrics {
+    std::size_t attempted{0};
+    std::size_t lost{0};
+    std::size_t delivered{0};
+    std::size_t redundant{0};
+};
+
+
 class Simulation{
 public:
 Simulation(const Network& net, Config config);
 void run();
 const std::vector<Node>& nodes() const;
-
+const Metrics& metrics() const;
 
 private:
 void schedule(double time, Event::Type type, std::size_t node);
 void on_send(const Event& e);
 void on_deliver(const Event& e);
+Metrics metrics_;
 
 const Network& net_ ;
 Config config_;

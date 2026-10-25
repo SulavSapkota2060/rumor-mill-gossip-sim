@@ -29,6 +29,9 @@ void run_and_summarize(const Network& net, Config cfg){
         }
     }
     std::cout << "fanout " << cfg.fanout << ": informed " << infromed << "/" << sim.nodes().size() << ", last heard at " << last << "\n";
+
+    const Metrics& m = sim.metrics();
+    std::cout << " attempted " << m.attempted << ", lost " << m.lost << ", delivered " << m.delivered << ", redundant " << m.redundant << "\n";
 }
 
 

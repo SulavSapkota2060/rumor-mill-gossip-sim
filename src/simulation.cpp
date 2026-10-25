@@ -19,6 +19,8 @@ void Simulation::schedule(double time, Event::Type type, std::size_t node) {
 const std::vector<Node> & Simulation::nodes() const {return nodes_ ;}
 
 
+const Metrics& Simulation::metrics() const {return metrics_ ;}
+
 
 
 void Simulation::on_send(const Event& e){
@@ -29,7 +31,11 @@ void Simulation::on_send(const Event& e){
     std::size_t count = std::min(config_.fanout, targets.size());
 
     for(std::size_t i=0; i < count; ++i){
-        if(is_lost(rng)) continue;
+        ++metrics_.attempted;
+        if(is_lost(rng))  {
+            ++metrics_.lost;
+            continue;
+        }
         schedule(e.time + delay(rng), Event::Type::Deliver, targets[i]);
     }
     schedule(e.time+config_.send_interval, Event::Type::Send, e.node);
@@ -37,8 +43,11 @@ void Simulation::on_send(const Event& e){
 }
 
 void Simulation::on_deliver(const Event& e){
+    ++metrics_.delivered;
     if(nodes_[e.node].receive_rumor(e.time)){
         schedule(e.time , Event::Type::Send, e.node);
+    } else{
+        ++metrics_.redundant;
     }
 }
 
