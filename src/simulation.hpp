@@ -25,6 +25,11 @@ struct Metrics {
     std::size_t lost{0};
     std::size_t delivered{0};
     std::size_t redundant{0};
+    std::size_t informed{0};
+    double t50{-1.0};
+    double t90{-1.0};
+    double t99{-1.0};
+    std::size_t attempted_at_99{0};
 };
 
 

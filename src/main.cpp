@@ -32,6 +32,8 @@ void run_and_summarize(const Network& net, Config cfg){
 
     const Metrics& m = sim.metrics();
     std::cout << " attempted " << m.attempted << ", lost " << m.lost << ", delivered " << m.delivered << ", redundant " << m.redundant << "\n";
+
+    std::cout << "  t50 " << m.t50 << ", t90 " << m.t90 << ", t99 " << m.t99 << ", messages by t99 " << m.attempted_at_99 << "\n";
 }
 
 

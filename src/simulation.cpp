@@ -45,6 +45,14 @@ void Simulation::on_send(const Event& e){
 void Simulation::on_deliver(const Event& e){
     ++metrics_.delivered;
     if(nodes_[e.node].receive_rumor(e.time)){
+        ++metrics_.informed;
+        const double frac = static_cast<double>(metrics_.informed) / static_cast<double>(nodes_.size());
+        if(metrics_.t50 < 0 && frac >= 0.50) metrics_.t50 = e.time;
+        if(metrics_.t90 < 0 && frac >= 0.90) metrics_.t90 = e.time;
+        if(metrics_.t99 < 0 && frac >= 0.99){
+            metrics_.t99 = e.time;
+            metrics_.attempted_at_99 = metrics_.attempted;
+        }
         schedule(e.time , Event::Type::Send, e.node);
     } else{
         ++metrics_.redundant;
