@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <vector>
+#include <random>
 
 
 class Network{
@@ -13,6 +14,13 @@ class Network{
     const std::vector<std::size_t>& neighbors(std::size_t id) const;
     
     std::size_t size() const;
+
+    bool has_edge(std::size_t a, std::size_t b) const;
+
+    static Network random_connected(std::size_t node_count, double avg_degree, std::mt19937& rng);
+
+
+
     
     private:
 
