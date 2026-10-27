@@ -46,6 +46,8 @@ Setup: 1000 nodes, one fixed random graph (graph seed 7, mean degree 6), time
 limit 60, 20 simulation seeds per row. Seeds vary loss, latency and peer
 choices; the graph does not change. All 180 runs reached 99% of nodes.
 
+![Time to 99% and messages sent by t99 versus fanout, one line per loss rate](results.png)
+
 | fanout | loss | t50 | t90 | t99 | messages by t99 | duplicates by t99 |
 |---|---|---|---|---|---|---|
 | 1 | 0.00 | 5.83 | 7.75 | 10.59 | 9960 | 88.9% |
