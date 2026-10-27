@@ -1,61 +1,33 @@
 #include <iostream>
-#include "node.hpp"
-#include <vector>
-#include  "network.hpp"
+#include <random>
+#include "network.hpp"
 #include "simulation.hpp"
-#include <algorithm>
 
-
-void run_and_print(const Network& net, Config config){
-    Simulation sim(net, config);
-    sim.run();
-    for (const Node& n: sim.nodes()){
-        std::cout << "node " << n.id << "heard at " << n.first_heard_at << "\n";
-    }
-    std::cout << "\n";
-}
-
-
-void run_and_summarize(const Network& net, Config cfg){
-    Simulation sim(net, cfg);
-    sim.run();
-
-    std::size_t infromed = 0;
-    double last = 0.0;
-    for(const Node& n: sim.nodes()) {
-        if (n.informed){
-            ++infromed; 
-            last = std::max(last, n.first_heard_at);
-        }
-    }
-    std::cout << "fanout " << cfg.fanout << ": informed " << infromed << "/" << sim.nodes().size() << ", last heard at " << last << "\n";
-
-    const Metrics& m = sim.metrics();
-    std::cout << " attempted " << m.attempted << ", lost " << m.lost << ", delivered " << m.delivered << ", redundant " << m.redundant << "\n";
-
-    std::cout << "  t50 " << m.t50 << ", t90 " << m.t90 << ", t99 " << m.t99 << ", messages by t99 " << m.attempted_at_99 << "\n";
-}
-
-
-
-int main(){
-    std::cout << std::boolalpha;
-
-   
-
-
-
-
+int main() {
     std::mt19937 graph_rng(7);
     Network net = Network::random_connected(1000, 6.0, graph_rng);
 
-    for(std::size_t f : {1u, 3u, 6u}){
-        run_and_summarize(net, Config{.time_limit=60.0, .loss=0.15, .seed=42, .fanout=f});
+    std::cout << "fanout,loss,seed,informed,t50,t90,t99,"
+                 "attempted,lost,delivered,redundant,attempted_at_99,"
+                 "delivered_at_99,redundant_at_99\n";
+
+    for (std::size_t fanout : {1u, 3u, 6u}) {
+        for (double loss : {0.0, 0.15, 0.3}) {
+            for (std::uint32_t seed = 1; seed <= 20; ++seed) {
+                Simulation sim(net, Config{.time_limit = 60.0, .loss = loss,
+                                           .seed = seed, .fanout = fanout});
+                sim.run();
+                const Metrics& m = sim.metrics();
+                std::cout << fanout << ',' << loss << ',' << seed << ','
+                          << m.informed << ','
+                          << m.t50 << ',' << m.t90 << ',' << m.t99 << ','
+                          << m.attempted << ',' << m.lost << ','
+                          << m.delivered << ',' << m.redundant << ','
+                          << m.attempted_at_99 << ','
+                          << m.delivered_at_99 << ','
+                          << m.redundant_at_99 << '\n';
+            }
+        }
     }
-
-
-
-
     return 0;
-
 }

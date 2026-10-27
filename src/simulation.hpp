@@ -30,6 +30,8 @@ struct Metrics {
     double t90{-1.0};
     double t99{-1.0};
     std::size_t attempted_at_99{0};
+    std::size_t delivered_at_99{0};
+    std::size_t redundant_at_99{0};
 };
 
 

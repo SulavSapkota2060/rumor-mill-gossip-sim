@@ -9,6 +9,7 @@ Simulation::Simulation(const Network& net, Config config): net_(net), config_(co
     }
 
     nodes_[config_.origin].receive_rumor(0.0);
+    ++metrics_.informed;
     schedule(0.0, Event::Type::Send, config_.origin);
 }
 
@@ -52,6 +53,8 @@ void Simulation::on_deliver(const Event& e){
         if(metrics_.t99 < 0 && frac >= 0.99){
             metrics_.t99 = e.time;
             metrics_.attempted_at_99 = metrics_.attempted;
+            metrics_.delivered_at_99 = metrics_.delivered;
+            metrics_.redundant_at_99 = metrics_.redundant;
         }
         schedule(e.time , Event::Type::Send, e.node);
     } else{
